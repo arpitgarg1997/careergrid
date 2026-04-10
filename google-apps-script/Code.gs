@@ -156,10 +156,10 @@ function buildEmailHTML(name, top1Key, top2Key, top3Key, summary) {
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
 
-        <!-- Header -->
+        <!-- Header with Logo -->
         <tr>
-          <td style="background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%);padding:32px 40px;text-align:center;">
-            <h1 style="color:#ffffff;font-size:22px;margin:0 0 4px 0;font-weight:700;letter-spacing:-0.5px;">Career<span style="color:#34D399;">Grid</span></h1>
+          <td style="background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%);padding:28px 40px;text-align:center;">
+            <img src="https://careergrid-five.vercel.app/logo-dark.svg" alt="CareerGrid" width="180" height="45" style="display:block;margin:0 auto 8px auto;" />
             <p style="color:#93C5FD;font-size:12px;margin:0;letter-spacing:2px;text-transform:uppercase;">Your Future, Mapped</p>
           </td>
         </tr>
@@ -276,10 +276,10 @@ function buildEmailHTML(name, top1Key, top2Key, top3Key, summary) {
           </td>
         </tr>
 
-        <!-- Footer -->
+        <!-- Footer with Logo -->
         <tr>
           <td style="background-color:#1E3A5F;padding:24px 40px;text-align:center;">
-            <p style="color:#93C5FD;font-size:13px;margin:0 0 4px 0;font-weight:600;">CareerGrid</p>
+            <img src="https://careergrid-five.vercel.app/logo-dark.svg" alt="CareerGrid" width="120" height="30" style="display:block;margin:0 auto 10px auto;" />
             <p style="color:#64748B;font-size:11px;margin:0;">India's structured career guidance platform for Class 9–12 students.</p>
             <p style="color:#475569;font-size:10px;margin:8px 0 0 0;">This email was sent because you completed the CareerGrid career quiz.</p>
           </td>

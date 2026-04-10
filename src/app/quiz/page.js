@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,6 +16,7 @@ export default function QuizPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const submittingRef = useRef(false);
 
   const progress = ((step) / TOTAL_STEPS) * 100;
 
@@ -36,25 +37,10 @@ export default function QuizPage() {
     if (validateInfo()) setStep(1);
   }
 
-  function handleAnswer(questionIndex, key) {
-    const qKey = `q${questionIndex + 1}`;
-    setAnswers((prev) => ({ ...prev, [qKey]: key }));
-    // Auto-advance after a short delay
-    setTimeout(() => {
-      if (questionIndex < questions.length - 1) {
-        setStep(questionIndex + 2); // +2 because step 0 is info
-      }
-    }, 300);
-  }
-
-  async function handleSubmit() {
-    // Check all questions answered
-    const unanswered = questions.filter((_, i) => !answers[`q${i + 1}`]);
-    if (unanswered.length > 0) {
-      setSubmitError(`Please answer all questions. ${unanswered.length} remaining.`);
-      return;
-    }
-
+  // ── Submit handler ──
+  async function doSubmit(allAnswers) {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setSubmitting(true);
     setSubmitError(null);
 
@@ -63,7 +49,7 @@ export default function QuizPage() {
       email: info.email.trim(),
       whatsapp: info.whatsapp.trim(),
       class: info.class,
-      answers,
+      answers: allAnswers,
     };
 
     try {
@@ -77,12 +63,6 @@ export default function QuizPage() {
 
       const data = await res.json();
 
-      // Store result in sessionStorage for the result page
-      if (typeof window !== "undefined") {
-        window.__careergrid_result = data;
-      }
-
-      // Navigate to result page with data in URL
       const params = new URLSearchParams({
         name: info.name.trim(),
         top1: data.top3[0],
@@ -93,23 +73,52 @@ export default function QuizPage() {
     } catch (err) {
       setSubmitError("Something went wrong. Please try again.");
       setSubmitting(false);
+      submittingRef.current = false;
     }
+  }
+
+  function handleAnswer(questionIndex, key) {
+    const qKey = `q${questionIndex + 1}`;
+    const newAnswers = { ...answers, [qKey]: key };
+    setAnswers(newAnswers);
+
+    setTimeout(() => {
+      if (questionIndex < questions.length - 1) {
+        // Not last question — go to next
+        setStep(questionIndex + 2);
+      } else {
+        // Last question — check if all answered, then auto-submit
+        const allAnswered = questions.every((_, i) => newAnswers[`q${i + 1}`]);
+        if (allAnswered) {
+          doSubmit(newAnswers);
+        }
+      }
+    }, 300);
+  }
+
+  async function handleSubmit() {
+    const unanswered = questions.filter((_, i) => !answers[`q${i + 1}`]);
+    if (unanswered.length > 0) {
+      setSubmitError(`Please answer all questions. ${unanswered.length} remaining.`);
+      return;
+    }
+    doSubmit(answers);
   }
 
   // ── Info Step ──
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4 py-6">
+        <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 md:p-8">
           <Link href="/" className="inline-block mb-2">
             <Image src="/logo-full.svg" alt="CareerGrid" width={170} height={43} priority />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Career Discovery Quiz</h1>
-          <p className="text-gray-500 mb-8">Let&apos;s start with a few details about you.</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-1">Career Discovery Quiz</h1>
+          <p className="text-gray-500 mb-6">Let&apos;s start with a few details about you.</p>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
               <input
                 type="text"
                 value={info.name}
@@ -117,11 +126,11 @@ export default function QuizPage() {
                 placeholder="Enter your full name"
                 className={`w-full px-4 py-3 rounded-lg border ${errors.name ? "border-red-400 bg-red-50" : "border-gray-300"} focus:border-accent-500 focus:ring-2 focus:ring-accent-200 outline-none transition`}
               />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
               <input
                 type="email"
                 value={info.email}
@@ -129,11 +138,11 @@ export default function QuizPage() {
                 placeholder="your@email.com"
                 className={`w-full px-4 py-3 rounded-lg border ${errors.email ? "border-red-400 bg-red-50" : "border-gray-300"} focus:border-accent-500 focus:ring-2 focus:ring-accent-200 outline-none transition`}
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">WhatsApp Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-500 text-sm">
                   +91
@@ -146,17 +155,17 @@ export default function QuizPage() {
                   className={`w-full px-4 py-3 rounded-r-lg border ${errors.whatsapp ? "border-red-400 bg-red-50" : "border-gray-300"} focus:border-accent-500 focus:ring-2 focus:ring-accent-200 outline-none transition`}
                 />
               </div>
-              {errors.whatsapp && <p className="text-red-500 text-sm mt-1">{errors.whatsapp}</p>}
+              {errors.whatsapp && <p className="text-red-500 text-xs mt-1">{errors.whatsapp}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Class</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Class</label>
               <div className="grid grid-cols-4 gap-3">
                 {["9", "10", "11", "12"].map((c) => (
                   <button
                     key={c}
                     onClick={() => setInfo({ ...info, class: c })}
-                    className={`py-3 rounded-lg border-2 font-semibold transition ${
+                    className={`py-2.5 rounded-lg border-2 font-semibold transition text-sm ${
                       info.class === c
                         ? "border-accent-500 bg-accent-50 text-accent-700"
                         : "border-gray-200 text-gray-600 hover:border-gray-300"
@@ -166,13 +175,13 @@ export default function QuizPage() {
                   </button>
                 ))}
               </div>
-              {errors.class && <p className="text-red-500 text-sm mt-1">{errors.class}</p>}
+              {errors.class && <p className="text-red-500 text-xs mt-1">{errors.class}</p>}
             </div>
           </div>
 
           <button
             onClick={handleInfoNext}
-            className="w-full mt-8 bg-accent-500 hover:bg-accent-600 text-white py-4 rounded-xl font-bold text-lg transition shadow-lg hover:shadow-xl"
+            className="w-full mt-6 bg-accent-500 hover:bg-accent-600 text-white py-3.5 rounded-xl font-bold text-lg transition shadow-lg hover:shadow-xl"
           >
             Start Quiz &rarr;
           </button>
@@ -189,112 +198,120 @@ export default function QuizPage() {
   const allAnswered = questions.every((_, i) => answers[`q${i + 1}`]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-3 py-4 md:px-4 md:py-8">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
-        {/* Progress bar */}
-        <div className="bg-gray-100 h-2">
+        {/* Progress bar — taller, with percentage label */}
+        <div className="relative bg-gray-200 h-3 md:h-3.5">
           <div
-            className="h-full bg-accent-500 progress-bar-fill rounded-r-full"
+            className="h-full bg-gradient-to-r from-accent-400 to-accent-500 progress-bar-fill rounded-r-full"
             style={{ width: `${progress}%` }}
           />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-500">
+            {Math.round(progress)}%
+          </span>
         </div>
 
-        <div className="p-6 md:p-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+        <div className="p-4 md:p-8">
+          {/* Header — compact on mobile */}
+          <div className="flex items-center justify-between mb-3 md:mb-6">
             <Link href="/">
-              <Image src="/logo-full.svg" alt="CareerGrid" width={160} height={40} />
+              <Image src="/logo-full.svg" alt="CareerGrid" width={130} height={33} className="md:hidden" />
+              <Image src="/logo-full.svg" alt="CareerGrid" width={160} height={40} className="hidden md:block" />
             </Link>
-            <span className="text-sm font-medium text-gray-500">
-              Question {questionIndex + 1} of {questions.length}
+            <span className="text-xs md:text-sm font-semibold text-white bg-primary-500 px-3 py-1 rounded-full">
+              {questionIndex + 1} / {questions.length}
             </span>
           </div>
 
-          {/* Question */}
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-snug">
+          {/* Question — compact text on mobile */}
+          <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-3 md:mb-6 leading-snug">
             {currentQuestion.text}
           </h2>
 
-          {/* Options */}
-          <div className="space-y-3 mb-8">
+          {/* Options — compact on mobile */}
+          <div className="space-y-2 md:space-y-3 mb-4 md:mb-8">
             {currentQuestion.options.map((opt) => (
               <button
                 key={opt.key}
                 onClick={() => handleAnswer(questionIndex, opt.key)}
-                className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                disabled={submitting}
+                className={`w-full text-left px-3 py-2.5 md:px-5 md:py-4 rounded-xl border-2 transition-all ${
                   currentAnswer === opt.key
                     ? "border-accent-500 bg-accent-50 text-accent-800 shadow-sm"
                     : "border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700"
-                }`}
+                } ${submitting ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold mr-3 ${
+                <span className={`inline-flex items-center justify-center w-6 h-6 md:w-8 md:h-8 rounded-full text-xs md:text-sm font-bold mr-2 md:mr-3 ${
                   currentAnswer === opt.key
                     ? "bg-accent-500 text-white"
                     : "bg-gray-100 text-gray-500"
                 }`}>
                   {opt.key}
                 </span>
-                <span className="font-medium">{opt.text}</span>
+                <span className="font-medium text-sm md:text-base">{opt.text}</span>
               </button>
             ))}
           </div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setStep(step - 1)}
-              className="text-gray-500 hover:text-gray-700 font-medium transition flex items-center gap-1"
-            >
-              &larr; Back
-            </button>
+          {/* Submitting state overlay for last question */}
+          {submitting && (
+            <div className="flex items-center justify-center gap-2 py-3 text-accent-600 font-semibold">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Calculating your career direction...
+            </div>
+          )}
 
-            {isLastQuestion ? (
+          {/* Navigation */}
+          {!submitting && (
+            <div className="flex items-center justify-between">
               <button
-                onClick={handleSubmit}
-                disabled={!allAnswered || submitting}
-                className={`px-8 py-3 rounded-xl font-bold text-lg transition ${
-                  allAnswered && !submitting
-                    ? "bg-accent-500 hover:bg-accent-600 text-white shadow-lg hover:shadow-xl"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
+                onClick={() => setStep(step - 1)}
+                className="text-gray-500 hover:text-gray-700 font-medium transition flex items-center gap-1 text-sm md:text-base"
               >
-                {submitting ? (
-                  <span className="flex items-center gap-2">
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Calculating...
-                  </span>
-                ) : (
-                  "See My Results"
-                )}
+                &larr; Back
               </button>
-            ) : (
-              currentAnswer && (
+
+              {isLastQuestion ? (
                 <button
-                  onClick={() => setStep(step + 1)}
-                  className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-xl font-semibold transition"
+                  onClick={handleSubmit}
+                  disabled={!allAnswered || submitting}
+                  className={`px-6 py-2.5 md:px-8 md:py-3 rounded-xl font-bold text-base md:text-lg transition ${
+                    allAnswered && !submitting
+                      ? "bg-accent-500 hover:bg-accent-600 text-white shadow-lg hover:shadow-xl"
+                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }`}
                 >
-                  Next &rarr;
+                  See My Results
                 </button>
-              )
-            )}
-          </div>
+              ) : (
+                currentAnswer && (
+                  <button
+                    onClick={() => setStep(step + 1)}
+                    className="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 md:px-6 md:py-3 rounded-xl font-semibold transition text-sm md:text-base"
+                  >
+                    Next &rarr;
+                  </button>
+                )
+              )}
+            </div>
+          )}
 
           {submitError && (
-            <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {submitError}
             </div>
           )}
 
-          {/* Question dots */}
-          <div className="flex items-center justify-center gap-1.5 mt-6 flex-wrap">
+          {/* Question dots — compact on mobile */}
+          <div className="flex items-center justify-center gap-1 md:gap-1.5 mt-4 md:mt-6 flex-wrap">
             {questions.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setStep(i + 1)}
-                className={`w-3 h-3 rounded-full transition ${
+                onClick={() => !submitting && setStep(i + 1)}
+                className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition ${
                   i === questionIndex
                     ? "bg-accent-500 scale-125"
                     : answers[`q${i + 1}`]
