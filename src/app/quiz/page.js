@@ -102,7 +102,7 @@ export default function QuizPage() {
       <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
           <Link href="/" className="inline-block mb-2">
-            <Image src="/logo-full.svg" alt="CareerGrid" width={130} height={33} priority />
+            <Image src="/logo-full.svg" alt="CareerGrid" width={170} height={43} priority />
           </Link>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Career Discovery Quiz</h1>
           <p className="text-gray-500 mb-8">Let&apos;s start with a few details about you.</p>
@@ -203,7 +203,7 @@ export default function QuizPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <Link href="/">
-              <Image src="/logo-full.svg" alt="CareerGrid" width={120} height={30} />
+              <Image src="/logo-full.svg" alt="CareerGrid" width={160} height={40} />
             </Link>
             <span className="text-sm font-medium text-gray-500">
               Question {questionIndex + 1} of {questions.length}

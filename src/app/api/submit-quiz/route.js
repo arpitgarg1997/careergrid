@@ -68,8 +68,16 @@ export async function POST(request) {
         answers,
       });
     } catch (sheetError) {
-      // Log but don't fail the user response
-      console.error("Google Sheets write failed:", sheetError.message);
+      // Log full error details for debugging in Vercel logs
+      console.error("Google Sheets write failed:", {
+        message: sheetError.message,
+        code: sheetError.code,
+        status: sheetError.status,
+        errors: sheetError.errors,
+        hasClientEmail: !!process.env.GOOGLE_CLIENT_EMAIL,
+        hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
+        hasSheetId: !!process.env.GOOGLE_SHEET_ID,
+      });
     }
 
     // Cache for dedup

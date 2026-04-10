@@ -12,7 +12,7 @@ function Navbar() {
     <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <Image src="/logo-full.svg" alt="CareerGrid" width={140} height={35} priority />
+          <Image src="/logo-full.svg" alt="CareerGrid" width={180} height={45} priority />
         </Link>
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
           <a href="#how-it-works" className="hover:text-primary-500 transition">How It Works</a>
@@ -324,7 +324,7 @@ function Footer() {
   return (
     <footer className="bg-primary-800 text-blue-200 py-10">
       <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <Image src="/logo-dark.svg" alt="CareerGrid" width={130} height={33} />
+        <Image src="/logo-dark.svg" alt="CareerGrid" width={170} height={43} />
         <p className="text-sm text-blue-300 text-center">
           India&apos;s structured career guidance platform for Class 9&ndash;12 students.
         </p>

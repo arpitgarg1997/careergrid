@@ -128,7 +128,7 @@ function ResultContent() {
       {/* Header */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-4">
         <Link href="/">
-          <Image src="/logo-dark.svg" alt="CareerGrid" width={140} height={35} priority />
+          <Image src="/logo-dark.svg" alt="CareerGrid" width={180} height={45} priority />
         </Link>
       </div>
 
