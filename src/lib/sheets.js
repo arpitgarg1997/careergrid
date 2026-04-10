@@ -1,25 +1,38 @@
 import { google } from "googleapis";
 
 /**
- * Parse the private key from Vercel env — handles all common formats:
- * - Wrapped in double quotes: "-----BEGIN..."
- * - Escaped newlines: \\n
- * - Both combined (most common Vercel issue)
+ * Robustly parse the private key from env — handles all edge cases:
+ * quotes, literal \n, Windows \r\n, extra whitespace, corrupted formatting.
+ * Reconstructs a clean PEM key from the base64 content.
  */
 function parsePrivateKey(raw) {
   if (!raw) return "";
 
   let key = raw;
 
-  // Strip wrapping double quotes if present
-  if (key.startsWith('"') && key.endsWith('"')) {
-    key = key.slice(1, -1);
-  }
+  // Strip any wrapping quotes
+  while (key.startsWith('"') && key.endsWith('"')) key = key.slice(1, -1);
+  while (key.startsWith("'") && key.endsWith("'")) key = key.slice(1, -1);
 
-  // Replace all literal \n (backslash + n) with real newlines
+  // Replace literal \n with real newlines
   key = key.replace(/\\n/g, "\n");
 
-  return key;
+  // Remove carriage returns
+  key = key.replace(/\r/g, "");
+
+  // Extract just the base64 content (strip headers, footers, whitespace)
+  const base64 = key
+    .replace(/-----BEGIN PRIVATE KEY-----/g, "")
+    .replace(/-----END PRIVATE KEY-----/g, "")
+    .replace(/\s+/g, "");
+
+  // Reconstruct clean PEM: header + base64 in 64-char lines + footer
+  const lines = base64.match(/.{1,64}/g) || [];
+  return (
+    "-----BEGIN PRIVATE KEY-----\n" +
+    lines.join("\n") +
+    "\n-----END PRIVATE KEY-----\n"
+  );
 }
 
 function getAuth() {
@@ -71,7 +84,6 @@ export async function appendQuizResponse(data) {
       },
     });
   } catch (err) {
-    // If the "Responses" tab doesn't exist, try the default Sheet1
     if (err.message?.includes("Unable to parse range") || err.code === 400) {
       console.error("'Responses' tab not found, trying 'Sheet1'...");
       await sheets.spreadsheets.values.append({
