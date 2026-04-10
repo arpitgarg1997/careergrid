@@ -3,15 +3,87 @@
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { CLUSTERS, CLUSTER_DESCRIPTIONS } from "@/lib/questions";
+
+// Lightweight confetti burst — no npm dependency needed
+function fireConfetti(canvasRef) {
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ["#10B981", "#3B82F6", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899", "#14B8A6", "#F97316"];
+  const pieces = [];
+
+  for (let i = 0; i < 150; i++) {
+    pieces.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
+      y: canvas.height / 2 - 100,
+      vx: (Math.random() - 0.5) * 16,
+      vy: Math.random() * -14 - 4,
+      w: Math.random() * 10 + 5,
+      h: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 12,
+      gravity: 0.35,
+      opacity: 1,
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    frame++;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    pieces.forEach((p) => {
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotationSpeed;
+      p.vx *= 0.99;
+
+      if (frame > 60) p.opacity -= 0.015;
+      if (p.opacity <= 0) return;
+
+      alive = true;
+      ctx.save();
+      ctx.globalAlpha = Math.max(p.opacity, 0);
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+
+    if (alive && frame < 200) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  animate();
+}
 
 function ResultContent() {
   const params = useSearchParams();
+  const canvasRef = useRef(null);
   const name = params.get("name") || "Student";
   const top1 = params.get("top1");
   const top2 = params.get("top2");
   const top3 = params.get("top3");
+
+  useEffect(() => {
+    if (top1 && top2 && top3) {
+      // Small delay so the page renders first, then confetti pops
+      const timer = setTimeout(() => fireConfetti(canvasRef), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [top1, top2, top3]);
 
   if (!top1 || !top2 || !top3) {
     return (
@@ -46,7 +118,13 @@ function ResultContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700">
+    <div className="min-h-screen bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 relative">
+      {/* Confetti canvas */}
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 pointer-events-none z-50"
+        style={{ width: "100vw", height: "100vh" }}
+      />
       {/* Header */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-4">
         <Link href="/">

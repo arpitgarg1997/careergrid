@@ -54,7 +54,7 @@ function Navbar() {
 /* ─────────────── Hero ─────────────── */
 function Hero() {
   return (
-    <section className="pt-28 pb-16 md:pt-36 md:pb-24 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white">
+    <section className="pt-24 pb-12 md:pt-32 md:pb-16 bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 text-white">
       <div className="max-w-5xl mx-auto px-4 text-center">
         <div className="inline-block bg-white/10 backdrop-blur rounded-full px-4 py-1.5 text-sm font-medium mb-6">
           Trusted by 1,000+ students across India
@@ -63,7 +63,7 @@ function Hero() {
           Confused About Which <br className="hidden md:block" />
           <span className="text-accent-300">Stream to Choose</span> After 10th?
         </h1>
-        <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8 leading-relaxed">
           Take India&apos;s most structured career guidance quiz. Discover your top 3 career
           clusters in under 5 minutes &mdash; completely free.
         </p>
@@ -109,9 +109,9 @@ function Problem() {
     },
   ];
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-bold text-primary-500 mb-4">
             The Stream Selection Problem in India
           </h2>
@@ -141,9 +141,9 @@ function HowItWorks() {
     { num: "3", icon: "🚀", title: "Get Direction", desc: "Receive stream recommendations, career paths, and next-step guidance tailored to your unique profile." },
   ];
   return (
-    <section id="how-it-works" className="py-16 md:py-24">
+    <section id="how-it-works" className="py-12 md:py-16">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-bold text-primary-500 mb-4">How CareerGrid Works</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">Three simple steps to career clarity.</p>
         </div>
@@ -173,9 +173,9 @@ function HowItWorks() {
 function CareerClusters() {
   const clusterList = Object.entries(CLUSTERS);
   return (
-    <section id="clusters" className="py-16 md:py-24 bg-gray-50">
+    <section id="clusters" className="py-12 md:py-16 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-bold text-primary-500 mb-4">9 Career Clusters</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             Every career path in India maps to one of these clusters. The quiz identifies which ones align with you.
@@ -222,9 +222,9 @@ function Parents() {
     },
   ];
   return (
-    <section id="parents" className="py-16 md:py-24">
+    <section id="parents" className="py-12 md:py-16">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-bold text-primary-500 mb-4">For Parents</h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             You want the best for your child. Here&apos;s how CareerGrid helps you guide them with confidence.
@@ -274,9 +274,9 @@ function FAQ() {
     { q: "How is this different from other career tests?", a: "Most career tests give you a personality type and stop there. CareerGrid maps your responses to India-specific career clusters, recommends streams (Science, Commerce, Arts), and provides actionable next steps. Our scoring engine also uses weighted questions for higher accuracy." },
   ];
   return (
-    <section id="faq" className="py-16 md:py-24 bg-gray-50">
+    <section id="faq" className="py-12 md:py-16 bg-gray-50">
       <div className="max-w-3xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h2 className="text-2xl md:text-4xl font-bold text-primary-500 mb-4">Frequently Asked Questions</h2>
         </div>
         <div className="space-y-4">
@@ -292,7 +292,7 @@ function FAQ() {
 /* ─────────────── Bottom CTA ─────────────── */
 function BottomCTA() {
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
+    <section className="py-12 md:py-16 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
       <div className="max-w-3xl mx-auto px-4 text-center">
         <h2 className="text-2xl md:text-4xl font-bold mb-4">Ready to Find Your Career Direction?</h2>
         <p className="text-lg text-blue-100 mb-8">
