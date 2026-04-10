@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90">
+  <defs>
+    <linearGradient id="warmGridD" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FF9F43"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+
+    <linearGradient id="warmArrowD" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF8A8A"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </linearGradient>
+
+    <linearGradient id="textGradD" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF8A8A"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </linearGradient>
+
+    <filter id="glowD" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="iconGlowD" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#FF6B6B" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(14, 11)" filter="url(#iconGlowD)">
+    <rect x="0" y="0" width="26" height="26" rx="7" fill="url(#warmGridD)" opacity="0.15"/>
+    <rect x="30" y="0" width="26" height="26" rx="7" fill="url(#warmGridD)" opacity="0.35"/>
+    <rect x="0" y="30" width="26" height="26" rx="7" fill="url(#warmGridD)" opacity="0.55"/>
+    <rect x="30" y="30" width="26" height="26" rx="7" fill="url(#warmGridD)" opacity="1"/>
+
+    <g filter="url(#glowD)">
+      <path d="M9 52 L47 14" stroke="url(#warmArrowD)" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M36 12 L49 12 L49 25" stroke="url(#warmArrowD)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+  </g>
+
+  <text x="92" y="50" font-family="'Space Grotesk', 'Outfit', 'Inter', system-ui, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.8">
+    <tspan fill="#F1F5F9">Career</tspan><tspan fill="url(#textGradD)">Grid</tspan>
+  </text>
+
+  <text x="93" y="70" font-family="'Space Grotesk', 'Outfit', 'Inter', system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#64748B" letter-spacing="3">
+    YOUR FUTURE, MAPPED.
+  </text>
+</svg>

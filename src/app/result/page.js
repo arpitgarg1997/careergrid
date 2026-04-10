@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
 import { CLUSTERS, CLUSTER_DESCRIPTIONS } from "@/lib/questions";
 
@@ -48,8 +49,8 @@ function ResultContent() {
     <div className="min-h-screen bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700">
       {/* Header */}
       <div className="max-w-4xl mx-auto px-4 pt-8 pb-4">
-        <Link href="/" className="text-xl font-bold text-white">
-          Career<span className="text-accent-300">Grid</span>
+        <Link href="/">
+          <Image src="/logo-dark.svg" alt="CareerGrid" width={140} height={35} priority />
         </Link>
       </div>
 

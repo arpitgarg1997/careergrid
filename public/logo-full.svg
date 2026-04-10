@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90">
+  <defs>
+    <!-- Warm sunset grid gradient -->
+    <linearGradient id="warmGrid" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FF9F43"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+
+    <!-- Arrow gradient - coral to electric purple -->
+    <linearGradient id="warmArrow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+
+    <!-- Text gradient for "Grid" -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B6B"/>
+      <stop offset="50%" stop-color="#FF9F43"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Soft shadow for icon -->
+    <filter id="iconShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#FF6B6B" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Icon group -->
+  <g transform="translate(14, 11)" filter="url(#iconShadow)">
+    <!-- Grid cells with progressive opacity — career progression -->
+    <rect x="0" y="0" width="26" height="26" rx="7" fill="url(#warmGrid)" opacity="0.15"/>
+    <rect x="30" y="0" width="26" height="26" rx="7" fill="url(#warmGrid)" opacity="0.35"/>
+    <rect x="0" y="30" width="26" height="26" rx="7" fill="url(#warmGrid)" opacity="0.55"/>
+    <rect x="30" y="30" width="26" height="26" rx="7" fill="url(#warmGrid)" opacity="1"/>
+
+    <!-- Growth arrow with glow -->
+    <g filter="url(#glow)">
+      <path d="M9 52 L47 14" stroke="url(#warmArrow)" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <path d="M36 12 L49 12 L49 25" stroke="url(#warmArrow)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="92" y="50" font-family="'Space Grotesk', 'Outfit', 'Inter', system-ui, sans-serif" font-size="34" font-weight="700" letter-spacing="-0.8">
+    <tspan fill="#1E293B">Career</tspan><tspan fill="url(#textGrad)">Grid</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="93" y="70" font-family="'Space Grotesk', 'Outfit', 'Inter', system-ui, sans-serif" font-size="10.5" font-weight="500" fill="#94A3B8" letter-spacing="3">
+    YOUR FUTURE, MAPPED.
+  </text>
+</svg>

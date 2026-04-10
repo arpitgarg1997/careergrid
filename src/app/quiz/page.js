@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { questions } from "@/lib/questions";
 
 const TOTAL_STEPS = 1 + questions.length; // 1 info step + 15 question steps
@@ -100,8 +101,8 @@ export default function QuizPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8">
-          <Link href="/" className="text-xl font-bold text-primary-500 mb-2 inline-block">
-            Career<span className="text-accent-500">Grid</span>
+          <Link href="/" className="inline-block mb-2">
+            <Image src="/logo-full.svg" alt="CareerGrid" width={130} height={33} priority />
           </Link>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Career Discovery Quiz</h1>
           <p className="text-gray-500 mb-8">Let&apos;s start with a few details about you.</p>
@@ -201,8 +202,8 @@ export default function QuizPage() {
         <div className="p-6 md:p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <Link href="/" className="text-lg font-bold text-primary-500">
-              Career<span className="text-accent-500">Grid</span>
+            <Link href="/">
+              <Image src="/logo-full.svg" alt="CareerGrid" width={120} height={30} />
             </Link>
             <span className="text-sm font-medium text-gray-500">
               Question {questionIndex + 1} of {questions.length}
