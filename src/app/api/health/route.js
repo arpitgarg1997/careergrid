@@ -1,26 +1,32 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
+function parsePrivateKey(raw) {
+  if (!raw) return "";
+  let key = raw;
+  if (key.startsWith('"') && key.endsWith('"')) {
+    key = key.slice(1, -1);
+  }
+  key = key.replace(/\\n/g, "\n");
+  return key;
+}
+
 export async function GET() {
+  const privateKey = parsePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
+
   const checks = {
     env: {
       GOOGLE_CLIENT_EMAIL: !!process.env.GOOGLE_CLIENT_EMAIL,
       GOOGLE_PRIVATE_KEY: !!process.env.GOOGLE_PRIVATE_KEY,
       GOOGLE_SHEET_ID: !!process.env.GOOGLE_SHEET_ID,
-      PRIVATE_KEY_LENGTH: (process.env.GOOGLE_PRIVATE_KEY || "").length,
-      PRIVATE_KEY_STARTS_WITH: (process.env.GOOGLE_PRIVATE_KEY || "").substring(0, 30),
+      RAW_KEY_LENGTH: (process.env.GOOGLE_PRIVATE_KEY || "").length,
+      PARSED_KEY_LENGTH: privateKey.length,
+      PARSED_KEY_VALID: privateKey.startsWith("-----BEGIN PRIVATE KEY-----"),
     },
     sheetsConnection: null,
   };
 
-  // Test actual Google Sheets connection
   try {
-    let privateKey = process.env.GOOGLE_PRIVATE_KEY || "";
-    if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-      privateKey = JSON.parse(privateKey);
-    }
-    privateKey = privateKey.replace(/\\n/g, "\n");
-
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,

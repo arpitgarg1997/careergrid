@@ -1,18 +1,30 @@
 import { google } from "googleapis";
 
+/**
+ * Parse the private key from Vercel env — handles all common formats:
+ * - Wrapped in double quotes: "-----BEGIN..."
+ * - Escaped newlines: \\n
+ * - Both combined (most common Vercel issue)
+ */
+function parsePrivateKey(raw) {
+  if (!raw) return "";
+
+  let key = raw;
+
+  // Strip wrapping double quotes if present
+  if (key.startsWith('"') && key.endsWith('"')) {
+    key = key.slice(1, -1);
+  }
+
+  // Replace all literal \n (backslash + n) with real newlines
+  key = key.replace(/\\n/g, "\n");
+
+  return key;
+}
+
 function getAuth() {
   const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
-  let privateKey = process.env.GOOGLE_PRIVATE_KEY || "";
-
-  // Handle multiple ways the private key might be stored in Vercel:
-  // 1. Escaped newlines: \\n → \n
-  // 2. JSON-encoded with extra quotes: "\"-----BEGIN..."
-  // 3. Raw with literal \n strings
-  if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-    // Strip wrapping quotes (Vercel sometimes adds these)
-    privateKey = JSON.parse(privateKey);
-  }
-  privateKey = privateKey.replace(/\\n/g, "\n");
+  const privateKey = parsePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
 
   if (!clientEmail || !privateKey) {
     throw new Error(
